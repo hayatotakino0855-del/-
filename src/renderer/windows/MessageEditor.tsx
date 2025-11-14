@@ -31,7 +31,7 @@ const MessageEditor: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this message?')) {
+    if (confirm('このメッセージを削除してもよろしいですか？')) {
       try {
         await window.electronAPI.deleteMessage(id);
         await loadMessages();
@@ -87,79 +87,169 @@ const MessageEditor: React.FC = () => {
   const getScheduleDisplay = (message: Message): string => {
     switch (message.schedule.type) {
       case 'always':
-        return 'Always';
+        return '常時表示';
       case 'weekdays':
-        return 'Weekdays';
+        return '平日のみ';
       case 'weekend':
-        return 'Weekend';
+        return '週末のみ';
       case 'custom':
-        return 'Custom';
+        return 'カスタム';
       default:
-        return 'Unknown';
+        return '不明';
     }
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1>Message Editor</h1>
-        <div>
-          <button
-            onClick={handleCreateNew}
-            style={{ padding: '10px 20px', fontSize: '14px', cursor: 'pointer', marginRight: '10px' }}
-          >
-            + New Message
-          </button>
-          <button
-            onClick={() => window.close()}
-            style={{ padding: '10px 20px', fontSize: '14px', cursor: 'pointer' }}
-          >
-            Close
-          </button>
+    <div style={{ 
+      padding: '40px', 
+      fontFamily: 'メイリオ, Meiryo, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", sans-serif',
+      backgroundColor: '#f5f5f5',
+      minHeight: '100vh'
+    }}>
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        backgroundColor: 'white',
+        padding: '40px',
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+          <h1 style={{ 
+            fontSize: '28px', 
+            margin: 0,
+            color: '#333',
+            borderBottom: '3px solid #4CAF50',
+            paddingBottom: '10px'
+          }}>
+            📝 メッセージ編集
+          </h1>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              onClick={handleCreateNew}
+              style={{ 
+                padding: '12px 24px', 
+                fontSize: '16px', 
+                cursor: 'pointer',
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 'bold',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}
+            >
+              ➕ 新規メッセージ
+            </button>
+            <button
+              onClick={() => window.close()}
+              style={{ 
+                padding: '12px 24px', 
+                fontSize: '16px', 
+                cursor: 'pointer',
+                backgroundColor: '#757575',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 'bold',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}
+            >
+              閉じる
+            </button>
+          </div>
         </div>
-      </div>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
         <thead>
-          <tr style={{ backgroundColor: '#f0f0f0' }}>
-            <th style={{ padding: '10px', border: '1px solid #ddd', width: '80px' }}>Order</th>
-            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Message</th>
-            <th style={{ padding: '10px', border: '1px solid #ddd', width: '120px' }}>Schedule</th>
-            <th style={{ padding: '10px', border: '1px solid #ddd', width: '100px' }}>Enabled</th>
-            <th style={{ padding: '10px', border: '1px solid #ddd', width: '200px' }}>Actions</th>
+          <tr style={{ backgroundColor: '#4CAF50', color: 'white' }}>
+            <th style={{ padding: '15px', border: '1px solid #ddd', width: '120px' }}>順序</th>
+            <th style={{ padding: '15px', border: '1px solid #ddd' }}>メッセージ内容</th>
+            <th style={{ padding: '15px', border: '1px solid #ddd', width: '120px' }}>スケジュール</th>
+            <th style={{ padding: '15px', border: '1px solid #ddd', width: '100px' }}>有効</th>
+            <th style={{ padding: '15px', border: '1px solid #ddd', width: '200px' }}>操作</th>
           </tr>
         </thead>
         <tbody>
           {messages.map((message, index) => (
-            <tr key={message.id}>
-              <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>
-                <button onClick={() => handleMoveUp(index)} disabled={index === 0} style={{ marginRight: '5px' }}>
+            <tr key={message.id} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f9f9f9' }}>
+              <td style={{ padding: '15px', border: '1px solid #ddd', textAlign: 'center' }}>
+                <button 
+                  onClick={() => handleMoveUp(index)} 
+                  disabled={index === 0} 
+                  style={{ 
+                    marginRight: '5px',
+                    padding: '5px 10px',
+                    cursor: index === 0 ? 'not-allowed' : 'pointer',
+                    backgroundColor: index === 0 ? '#ccc' : '#2196F3',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px'
+                  }}
+                >
                   ↑
                 </button>
-                {message.order}
-                <button onClick={() => handleMoveDown(index)} disabled={index === messages.length - 1} style={{ marginLeft: '5px' }}>
+                <span style={{ fontWeight: 'bold', fontSize: '16px' }}>{message.order}</span>
+                <button 
+                  onClick={() => handleMoveDown(index)} 
+                  disabled={index === messages.length - 1} 
+                  style={{ 
+                    marginLeft: '5px',
+                    padding: '5px 10px',
+                    cursor: index === messages.length - 1 ? 'not-allowed' : 'pointer',
+                    backgroundColor: index === messages.length - 1 ? '#ccc' : '#2196F3',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px'
+                  }}
+                >
                   ↓
                 </button>
               </td>
-              <td style={{ padding: '10px', border: '1px solid #ddd' }}>{message.content}</td>
-              <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>
-                {getScheduleDisplay(message)}
+              <td style={{ padding: '15px', border: '1px solid #ddd' }}>{message.content}</td>
+              <td style={{ padding: '15px', border: '1px solid #ddd', textAlign: 'center' }}>
+                <span style={{ 
+                  padding: '4px 12px',
+                  backgroundColor: '#e3f2fd',
+                  borderRadius: '12px',
+                  fontSize: '14px',
+                  color: '#1976d2'
+                }}>
+                  {getScheduleDisplay(message)}
+                </span>
               </td>
-              <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>
-                {message.enabled ? '✓' : '✗'}
+              <td style={{ padding: '15px', border: '1px solid #ddd', textAlign: 'center' }}>
+                <span style={{ fontSize: '20px' }}>{message.enabled ? '✅' : '❌'}</span>
               </td>
-              <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>
+              <td style={{ padding: '15px', border: '1px solid #ddd', textAlign: 'center' }}>
                 <button
                   onClick={() => handleEdit(message)}
-                  style={{ padding: '5px 10px', marginRight: '5px', cursor: 'pointer' }}
+                  style={{ 
+                    padding: '8px 16px', 
+                    marginRight: '8px', 
+                    cursor: 'pointer',
+                    backgroundColor: '#2196F3',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontWeight: 'bold'
+                  }}
                 >
-                  Edit
+                  ✏️ 編集
                 </button>
                 <button
                   onClick={() => handleDelete(message.id)}
-                  style={{ padding: '5px 10px', cursor: 'pointer', backgroundColor: '#ff4444', color: 'white', border: 'none' }}
+                  style={{ 
+                    padding: '8px 16px', 
+                    cursor: 'pointer', 
+                    backgroundColor: '#f44336', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontWeight: 'bold'
+                  }}
                 >
-                  Delete
+                  🗑️ 削除
                 </button>
               </td>
             </tr>
@@ -168,8 +258,16 @@ const MessageEditor: React.FC = () => {
       </table>
 
       {messages.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-          No messages yet. Click "New Message" to create one.
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '60px', 
+          color: '#999',
+          backgroundColor: '#f9f9f9',
+          borderRadius: '8px',
+          marginTop: '20px'
+        }}>
+          <p style={{ fontSize: '18px', margin: 0 }}>📭 メッセージがまだありません</p>
+          <p style={{ fontSize: '14px', marginTop: '10px' }}>「新規メッセージ」ボタンをクリックして作成してください</p>
         </div>
       )}
 
@@ -181,46 +279,72 @@ const MessageEditor: React.FC = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            zIndex: 1000
           }}
         >
           <div
             style={{
               backgroundColor: 'white',
-              padding: '30px',
-              borderRadius: '8px',
-              width: '600px',
-              maxHeight: '80vh',
+              padding: '40px',
+              borderRadius: '12px',
+              width: '700px',
+              maxHeight: '85vh',
               overflow: 'auto',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
             }}
           >
-            <h2>{messages.find((m) => m.id === editingMessage.id) ? 'Edit Message' : 'New Message'}</h2>
+            <h2 style={{ 
+              marginTop: 0, 
+              marginBottom: '30px',
+              fontSize: '24px',
+              color: '#333',
+              borderBottom: '2px solid #4CAF50',
+              paddingBottom: '10px'
+            }}>
+              {messages.find((m) => m.id === editingMessage.id) ? '✏️ メッセージを編集' : '➕ 新規メッセージ'}
+            </h2>
 
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Message Content:</label>
+            <div style={{ marginBottom: '25px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', fontSize: '16px', color: '#555' }}>
+                メッセージ内容:
+              </label>
               <textarea
                 value={editingMessage.content}
                 onChange={(e) => setEditingMessage({ ...editingMessage, content: e.target.value })}
-                style={{ width: '100%', minHeight: '100px', padding: '10px', fontSize: '14px' }}
+                style={{ 
+                  width: '100%', 
+                  minHeight: '120px', 
+                  padding: '12px', 
+                  fontSize: '16px',
+                  border: '2px solid #ddd',
+                  borderRadius: '8px',
+                  fontFamily: 'inherit',
+                  resize: 'vertical'
+                }}
+                placeholder="テロップに表示するメッセージを入力してください"
               />
             </div>
 
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+            <div style={{ marginBottom: '25px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', fontSize: '16px', cursor: 'pointer' }}>
                 <input
                   type="checkbox"
                   checked={editingMessage.enabled}
                   onChange={(e) => setEditingMessage({ ...editingMessage, enabled: e.target.checked })}
+                  style={{ width: '20px', height: '20px', marginRight: '10px', cursor: 'pointer' }}
                 />
-                {' '}Enabled
+                <span style={{ fontWeight: 'bold', color: '#555' }}>このメッセージを有効にする</span>
               </label>
             </div>
 
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Schedule Type:</label>
+            <div style={{ marginBottom: '25px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', fontSize: '16px', color: '#555' }}>
+                表示スケジュール:
+              </label>
               <select
                 value={editingMessage.schedule.type}
                 onChange={(e) =>
@@ -229,21 +353,51 @@ const MessageEditor: React.FC = () => {
                     schedule: { ...editingMessage.schedule, type: e.target.value as any },
                   })
                 }
-                style={{ width: '100%', padding: '10px', fontSize: '14px' }}
+                style={{ 
+                  width: '100%', 
+                  padding: '12px', 
+                  fontSize: '16px',
+                  border: '2px solid #ddd',
+                  borderRadius: '8px',
+                  cursor: 'pointer'
+                }}
               >
-                <option value="always">Always</option>
-                <option value="weekdays">Weekdays (Mon-Fri)</option>
-                <option value="weekend">Weekend (Sat-Sun)</option>
-                <option value="custom">Custom</option>
+                <option value="always">常時表示</option>
+                <option value="weekdays">平日のみ（月〜金）</option>
+                <option value="weekend">週末のみ（土・日）</option>
+                <option value="custom">カスタム設定</option>
               </select>
             </div>
 
             {editingMessage.schedule.type === 'custom' && (
-              <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '5px' }}>
-                <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold' }}>Days of Week:</label>
-                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-                    <label key={index} style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ 
+                marginBottom: '25px', 
+                padding: '20px', 
+                backgroundColor: '#f0f7ff', 
+                borderRadius: '8px',
+                border: '2px solid #2196F3'
+              }}>
+                <label style={{ display: 'block', marginBottom: '15px', fontWeight: 'bold', fontSize: '16px', color: '#1976d2' }}>
+                  📅 曜日を選択:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '10px' }}>
+                  {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => (
+                    <label 
+                      key={index} 
+                      style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        padding: '10px',
+                        backgroundColor: editingMessage.schedule.daysOfWeek?.includes(index) ? '#2196F3' : 'white',
+                        color: editingMessage.schedule.daysOfWeek?.includes(index) ? 'white' : '#333',
+                        borderRadius: '8px',
+                        border: '2px solid #2196F3',
+                        fontWeight: 'bold',
+                        transition: 'all 0.2s'
+                      }}
+                    >
                       <input
                         type="checkbox"
                         checked={editingMessage.schedule.daysOfWeek?.includes(index) || false}
@@ -267,16 +421,17 @@ const MessageEditor: React.FC = () => {
                             });
                           }
                         }}
+                        style={{ display: 'none' }}
                       />
-                      {' '}{day}
+                      {day}
                     </label>
                   ))}
                 </div>
 
-                <label style={{ display: 'block', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
-                  Time Range:
+                <label style={{ display: 'block', marginTop: '20px', marginBottom: '10px', fontWeight: 'bold', fontSize: '16px', color: '#1976d2' }}>
+                  ⏰ 時間帯:
                 </label>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                   <input
                     type="time"
                     value={editingMessage.schedule.timeRanges?.[0]?.startTime || '00:00'}
@@ -288,9 +443,15 @@ const MessageEditor: React.FC = () => {
                         schedule: { ...editingMessage.schedule, timeRanges },
                       });
                     }}
-                    style={{ padding: '8px', fontSize: '14px' }}
+                    style={{ 
+                      padding: '10px', 
+                      fontSize: '16px',
+                      border: '2px solid #2196F3',
+                      borderRadius: '8px',
+                      flex: 1
+                    }}
                   />
-                  <span>to</span>
+                  <span style={{ fontWeight: 'bold', color: '#1976d2' }}>〜</span>
                   <input
                     type="time"
                     value={editingMessage.schedule.timeRanges?.[0]?.endTime || '23:59'}
@@ -302,34 +463,52 @@ const MessageEditor: React.FC = () => {
                         schedule: { ...editingMessage.schedule, timeRanges },
                       });
                     }}
-                    style={{ padding: '8px', fontSize: '14px' }}
+                    style={{ 
+                      padding: '10px', 
+                      fontSize: '16px',
+                      border: '2px solid #2196F3',
+                      borderRadius: '8px',
+                      flex: 1
+                    }}
                   />
                 </div>
               </div>
             )}
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', marginTop: '30px' }}>
               <button
                 onClick={() => {
                   setIsDialogOpen(false);
                   setEditingMessage(null);
                 }}
-                style={{ padding: '10px 20px', fontSize: '14px', cursor: 'pointer' }}
+                style={{ 
+                  padding: '12px 30px', 
+                  fontSize: '16px', 
+                  cursor: 'pointer',
+                  backgroundColor: '#757575',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: 'bold'
+                }}
               >
-                Cancel
+                キャンセル
               </button>
               <button
                 onClick={handleSave}
                 style={{
-                  padding: '10px 20px',
-                  fontSize: '14px',
+                  padding: '12px 30px',
+                  fontSize: '16px',
                   cursor: 'pointer',
                   backgroundColor: '#4CAF50',
                   color: 'white',
                   border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: 'bold',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                 }}
               >
-                Save
+                💾 保存
               </button>
             </div>
           </div>

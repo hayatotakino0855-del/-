@@ -71,12 +71,19 @@ const TeleopBar: React.FC = () => {
   };
 
   if (!settings) {
-    return <div>Loading...</div>;
+    return <div style={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      height: '50px',
+      backgroundColor: '#f5f5f5',
+      fontFamily: 'メイリオ, Meiryo, sans-serif'
+    }}>読み込み中...</div>;
   }
 
   const messageText = messages.length > 0
     ? messages.map((m) => m.content).join(' '.repeat(Math.floor(settings.animation.gap / 10)))
-    : 'No messages to display';
+    : 'メッセージがありません';
 
   const backgroundColor = `${settings.colors.background}${Math.floor(settings.colors.backgroundOpacity * 255).toString(16).padStart(2, '0')}`;
 
