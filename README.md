@@ -157,7 +157,7 @@ MIT
 ## 開発者
 
 Developed by Devin AI
-Requested by: hayato.takino0855@gmail.com (@hayatotakino0855-del)
+Requested by: h.t
 
 ## リンク
 
